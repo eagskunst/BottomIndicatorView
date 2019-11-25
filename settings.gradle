@@ -1,0 +1,2 @@
+include ':app', ':bottomindicatorview2'
+rootProject.name='BottomIndicatorView'
