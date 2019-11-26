@@ -7,8 +7,12 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
+import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
@@ -17,19 +21,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView
  * Created by eagskunst in 25/11/2019.
  */
 
-class BottomNavigationIndicatorView  @JvmOverloads constructor(
-    context: Context, attributeSet: AttributeSet? = null, defStyleAttr: Int = 0, override var rect: Rect = Rect()):
-        View(context, attributeSet, defStyleAttr), IndicatorView {
+open class BottomNavigationIndicatorView  @JvmOverloads constructor(
+    context: Context, attributeSet: AttributeSet? = null, defStyleAttr: Int = 0):
+        View(context, attributeSet, defStyleAttr) {
 
     companion object {
-        private const val NO_ID = -1
-        private const val indicatorLastIndex = "INDICATOR_LAST_INDEX"
+        protected const val NO_ID = -1
+        protected const val INDICATOR_LAST_INDEX = "INDICATOR_LAST_INDEX"
+        protected const val TAG = "BottomNavIndicatorView"
+        protected const val SAVED_STATE = "SAVED_STATE"
     }
 
     private val targetId: Int
     private val indicatorDrawable: Drawable
     private var bottomNav: BottomNavigationMenuView? = null
     private var animator: AnimatorSet? = null
+    private var rect = Rect()
     private var index = 0
 
     init {
@@ -39,11 +46,11 @@ class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
         else{
             with(context.obtainStyledAttributes(attributeSet, R.styleable.BottomNavigationIndicatorView)){
-                val backgroundId = getResourceId(R.styleable.BottomNavigationIndicatorView_customIndicatorBackground, NO_ID)
+                val backgroundId = getResourceId(R.styleable.BottomNavigationIndicatorView_customIndicatorBackground_indicatorView, NO_ID)
                 indicatorDrawable = if(backgroundId == NO_ID) ColorDrawable(ContextCompat.getColor(context, R.color.colorIndicator_indicatorView))
                 else getDrawable(backgroundId) ?: ColorDrawable(ContextCompat.getColor(context, R.color.colorIndicator_indicatorView))
 
-                targetId = getResourceId(R.styleable.BottomNavigationIndicatorView_targetBottomNavigation, NO_ID)
+                targetId = getResourceId(R.styleable.BottomNavigationIndicatorView_targetBottomNavigation_indicatorView, NO_ID)
                 recycle()
             }
         }
@@ -52,7 +59,7 @@ class BottomNavigationIndicatorView  @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.clipRect(rect)
-        canvas?.let{ indicatorDrawable.draw(it) }
+        canvas?.let { indicatorDrawable.draw(it) }
     }
 
     override fun onAttachedToWindow() {
@@ -80,7 +87,21 @@ class BottomNavigationIndicatorView  @JvmOverloads constructor(
         bottomNav = null
     }
 
-    override fun updateRectByIndex(index: Int, animated: Boolean) {
+    override fun onSaveInstanceState(): Parcelable?  =
+        Bundle().apply {
+            putParcelable(SAVED_STATE, super.onSaveInstanceState())
+            putInt(INDICATOR_LAST_INDEX, index)
+        }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if(state != null && state is Bundle){
+            index = state.getInt(INDICATOR_LAST_INDEX)
+            post { updateRectByIndex(index, false) }
+        }
+        super.onRestoreInstanceState(state)
+    }
+
+    open fun updateRectByIndex(index: Int, animated: Boolean) {
         this.index = index
         bottomNav?.apply {
             if (childCount < 1 || index >= childCount) return
@@ -95,7 +116,7 @@ class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
     }
 
-    override fun startUpdateRectAnimation(rect: Rect) {
+    open fun startUpdateRectAnimation(rect: Rect) {
         animator?.cancel()
         animator = AnimatorSet().also {
             it.playTogether(
@@ -110,9 +131,18 @@ class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
     }
 
-    override fun updateRect(rect: Rect) {
+    open fun updateRect(rect: Rect) {
         this.rect = rect
         postInvalidate()
     }
+
+    private fun attachedError(message: String) {
+        Log.e(TAG, message)
+    }
+
+    @Keep fun setRectLeft(left: Int) = updateRect(rect.apply { this.left = left })
+    @Keep fun setRectRight(right: Int) = updateRect(rect.apply { this.right = right })
+    @Keep fun setRectTop(top: Int) = updateRect(rect.apply { this.top = top })
+    @Keep fun setRectBottom(bottom: Int) = updateRect(rect.apply { this.bottom = bottom })
 
 }
