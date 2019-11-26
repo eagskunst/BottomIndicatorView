@@ -1,8 +1,9 @@
 # BottomIndicatorView
-
-<img src="https://i.imgur.com/M7CnepR.png" width=200px>
-<img src="https://i.imgur.com/5ecjdTc.png" width=200px>
-<img src="https://i.imgur.com/8fLrJFG.png" width=200px>
+<p float="left">
+    <img src="https://i.imgur.com/M7CnepR.png" width=200px>
+    <img src="https://i.imgur.com/5ecjdTc.png" width=200px>
+    <img src="https://i.imgur.com/8fLrJFG.png" width=200px>
+</p>
 
 An indicator for a MultiListenerBottomNavigationView.
 Before anything, this library is heavily based on Ademar Oliveira is article. Please go to his [article](https://medium.com/@ademar111190/writing-a-custom-view-to-use-as-bottom-navigation-indicator-8cf63a737dab) and follow him.
