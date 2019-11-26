@@ -8,6 +8,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 /**
  * Created by eagskunst in 25/11/2019.
+ * A BottomNavigationView wrapper to successfully use multiple listener. The main listener is itself
  */
 
 class MultiListenerBottomNavigationView @JvmOverloads constructor

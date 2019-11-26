@@ -19,6 +19,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 
 /**
  * Created by eagskunst in 25/11/2019.
+ * BottomIndicator for a [MultiListenerBottomNavigationView]. Could use a color or a custom drawable.
+ * If no drawable is provided, the default color is used. If you don't want to provide a color through the XML,
+ * you could add it in your own app file and use the 'tools:override=true' option. The name for the color would be 'colorIndicator_indicatorView'
+ * The params that this view receives are the same as any View.
+ *
  */
 
 open class BottomNavigationIndicatorView  @JvmOverloads constructor(
@@ -32,12 +37,12 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         protected const val SAVED_STATE = "SAVED_STATE"
     }
 
-    private val targetId: Int
-    private val indicatorDrawable: Drawable
+    private val targetId: Int //The [MultiListenerBottomNavigationView] view ID.
+    private val indicatorDrawable: Drawable //The Drawable to use as indicator.
     private var bottomNav: BottomNavigationMenuView? = null
     private var animator: AnimatorSet? = null
     private var rect = Rect()
-    private var index = 0
+    private var index = 0 //The current index selected of the BottomNav. This is also used to restore the view state.
 
     init {
         if(attributeSet == null){
@@ -103,6 +108,11 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         super.onRestoreInstanceState(savedState)
     }
 
+    /**
+    * Updates the rect position thanks to the bottomNavigationView that is attached trough the xml
+    * @param index The navigation item is index
+    * @param animated Animate the rect with or without animation
+    * */
     open fun updateRectByIndex(index: Int, animated: Boolean) {
         this.index = index
         bottomNav?.apply {
@@ -118,6 +128,10 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
     }
 
+    /**
+    * Makes the view animation. You could override this to make your own implementation.
+    * @param rect: The rect that is going to animate.
+    * */
     open fun startUpdateRectAnimation(rect: Rect) {
         animator?.cancel()
         animator = AnimatorSet().also {
@@ -133,6 +147,9 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
     }
 
+    /*
+    * Updates the Rect that the view uses
+    * */
     open fun updateRect(rect: Rect) {
         this.rect = rect
         postInvalidate()
@@ -142,6 +159,9 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         Log.e(TAG, message)
     }
 
+    /**
+    * Functions called trough reflection.
+    * */
     @Keep fun setRectLeft(left: Int) = updateRect(rect.apply { this.left = left })
     @Keep fun setRectRight(right: Int) = updateRect(rect.apply { this.right = right })
     @Keep fun setRectTop(top: Int) = updateRect(rect.apply { this.top = top })
