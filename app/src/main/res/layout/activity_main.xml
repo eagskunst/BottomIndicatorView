@@ -41,6 +41,7 @@
         android:elevation="8dp"
         app:layout_constraintTop_toTopOf="@id/bottomNavView"
         app:targetBottomNavigation_indicatorView="@id/bottomNavView"
+        app:customIndicatorBackground_indicatorView="@drawable/custom_background_indicator"
         />
 
 

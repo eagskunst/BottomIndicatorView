@@ -46,11 +46,11 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
         else{
             with(context.obtainStyledAttributes(attributeSet, R.styleable.BottomNavigationIndicatorView)){
+                targetId = getResourceId(R.styleable.BottomNavigationIndicatorView_targetBottomNavigation_indicatorView, NO_ID)
+
                 val backgroundId = getResourceId(R.styleable.BottomNavigationIndicatorView_customIndicatorBackground_indicatorView, NO_ID)
                 indicatorDrawable = if(backgroundId == NO_ID) ColorDrawable(ContextCompat.getColor(context, R.color.colorIndicator_indicatorView))
-                else getDrawable(backgroundId) ?: ColorDrawable(ContextCompat.getColor(context, R.color.colorIndicator_indicatorView))
-
-                targetId = getResourceId(R.styleable.BottomNavigationIndicatorView_targetBottomNavigation_indicatorView, NO_ID)
+                else ContextCompat.getDrawable(context, backgroundId) ?: ColorDrawable(ContextCompat.getColor(context, R.color.colorIndicator_indicatorView))
                 recycle()
             }
         }
