@@ -94,11 +94,13 @@ open class BottomNavigationIndicatorView  @JvmOverloads constructor(
         }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
+        var savedState: Parcelable? = null
         if(state != null && state is Bundle){
             index = state.getInt(INDICATOR_LAST_INDEX)
             post { updateRectByIndex(index, false) }
+            savedState = state.getParcelable(SAVED_STATE)
         }
-        super.onRestoreInstanceState(state)
+        super.onRestoreInstanceState(savedState)
     }
 
     open fun updateRectByIndex(index: Int, animated: Boolean) {
