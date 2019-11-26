@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BottomNavigationIndicatorView">
+        <attr name="targetBottomNavigation_indicatorView" format="reference"/>
+        <attr name="customIndicatorBackground_indicatorView" format="reference|color"/>
+    </declare-styleable>
+</resources>
